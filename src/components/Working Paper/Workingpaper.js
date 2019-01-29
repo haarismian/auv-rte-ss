@@ -27,17 +27,11 @@ class Workingpaper extends React.Component {
     storedCellValue: null,
     activeTableRef: null,
     components: [],
-    linkSettingMode: false,
-
+    linkSettingMode: false
   };
 
   onCellSelect = () => {
     let coord = this.ref.current.hotInstance.getSelected();
-    if (this.state.linkSettingMode===true) {
-      let link1 = {x: coord[0][0], y: coord[0][1]}
-    } else {
-      
-    }
     // let copyableData = this.ref.current.hotInstance.getCopyableData(
     //   coord[0][0],
     //   coord[0][1]
@@ -127,7 +121,6 @@ class Workingpaper extends React.Component {
         manualColumnResize
         manualRowResize
         manualColumnFreeze
-
       />
     );
 

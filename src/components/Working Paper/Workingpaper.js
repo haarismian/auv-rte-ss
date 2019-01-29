@@ -33,18 +33,13 @@ class Workingpaper extends React.Component {
     linkingCell: null
   };
 
-  onCellSelect = (
-    e,
-    row,
-    column,
-  ) => {
+  onCellSelect = (e, row, column) => {
     console.log("r:" + row);
     console.log("c:" + column);
 
-    if (this.state.originMode===true && this.state.linkingCell !== null) {
-      this.setState({linkingCell: {y: row, x: column}})
+    if (this.state.originMode === true && this.state.linkingCell !== null) {
+      this.setState({ linkingCell: { y: row, x: column } });
     } else if (this.state.linkingCell) {
-      
     }
 
     // let activeTable = this.ref.current.id;
@@ -74,31 +69,9 @@ class Workingpaper extends React.Component {
   renderAgreeLeadSheet = () => {
     let agreeLeadSheetRef = React.createRef();
     this.components.push(
-      <HotTable
-        ref={agreeLeadSheetRef}
+      <Spreadsheet
+        onCellSelect={this.onCellSelect}
         data={DATA.agreeLeadsheetData}
-        colHeaders={true}
-        contextMenu
-        mergeCells
-        rowHeaders={true}
-        width="1000"
-        height="300"
-        stretchH="all"
-        formulas={true}
-        afterSelection={(e, column, row) => {
-          this.onCellSelect(
-            e,
-            row,
-            column
-            // row2,
-            // column2,
-            // preventScrolling,
-            // selectionLayerLevel
-          );
-        }}
-        manualColumnResize
-        manualRowResize
-        manualColumnFreeze
       />
     );
 
@@ -109,31 +82,10 @@ class Workingpaper extends React.Component {
     let sampleCalculationRef = React.createRef();
 
     this.components.push(
-      <HotTable
-        ref={sampleCalculationRef}
+      <Spreadsheet
+        onCellSelect={this.onCellSelect}
         data={DATA.sampleCalculation}
-        colHeaders={true}
-        contextMenu
-        mergeCells
-        rowHeaders={true}
-        width="1000"
-        height="300"
-        stretchH="all"
-        formulas={true}
-        afterSelection={(e, column, row) => {
-          this.onCellSelect(
-            e,
-            row,
-            column
-            // row2,
-            // column2,
-            // preventScrolling,
-            // selectionLayerLevel
-          );
-        }}
-        manualColumnResize
-        manualRowResize
-        manualColumnFreeze
+
       />
     );
     this.setState({ state: this.state });
@@ -146,13 +98,11 @@ class Workingpaper extends React.Component {
   };
 
   originLink = () => {
-    this.setState({originMode: true})
-    alert('select origin cell')
-  }
+    this.setState({ originMode: true });
+    alert("select origin cell");
+  };
 
-  destinationLink = () => {
-    
-  }
+  destinationLink = () => {};
 
   renderButtons = () => {
     return (
@@ -191,6 +141,7 @@ class Workingpaper extends React.Component {
   };
 
   render() {
+    console.log(this.refs);
     return (
       <div id="working-paper">
         <AddBlock

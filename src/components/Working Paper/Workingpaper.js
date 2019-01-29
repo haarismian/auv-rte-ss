@@ -33,9 +33,10 @@ class Workingpaper extends React.Component {
     linkingCell: null
   };
 
-  onCellSelect = (e, row, column) => {
+  onCellSelect = (e, row, column, ref) => {
     console.log("r:" + row);
     console.log("c:" + column);
+    console.log(ref.id)
 
     if (this.state.originMode === true && this.state.linkingCell !== null) {
       this.setState({ linkingCell: { y: row, x: column } });
@@ -72,6 +73,7 @@ class Workingpaper extends React.Component {
       <Spreadsheet
         onCellSelect={this.onCellSelect}
         data={DATA.agreeLeadsheetData}
+        ref={agreeLeadSheetRef}
       />
     );
 
@@ -85,9 +87,10 @@ class Workingpaper extends React.Component {
       <Spreadsheet
         onCellSelect={this.onCellSelect}
         data={DATA.sampleCalculation}
-
+        ref={sampleCalculationRef}
       />
     );
+
     this.setState({ state: this.state });
   };
 

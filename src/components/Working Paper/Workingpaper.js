@@ -16,6 +16,7 @@ import { DATA } from "./Building Blocks/data";
 class Workingpaper extends React.Component {
   constructor(props) {
     super(props);
+    this.components = [];
   }
 
   state = {
@@ -27,27 +28,33 @@ class Workingpaper extends React.Component {
     storedCellValue: null,
     activeTableRef: null,
     components: [],
-    linkSettingMode: false
+    originMode: false,
+    destinationMode: false,
+    linkingCell: null
   };
 
-  onCellSelect = () => {
-    let coord = this.ref.current.hotInstance.getSelected();
-    // let copyableData = this.ref.current.hotInstance.getCopyableData(
-    //   coord[0][0],
-    //   coord[0][1]
-    // );
+  onCellSelect = (
+    e,
+    row,
+    column,
+  ) => {
+    console.log("r:" + row);
+    console.log("c:" + column);
 
-    let activeTable = this.ref.current.id;
+    if (this.state.originMode===true && this.state.linkingCell !== null) {
+      this.setState({linkingCell: {y: row, x: column}})
+    } else if (this.state.linkingCell) {
+      
+    }
 
-    this.setState({
-      // selectedCellXStart: coord[0][0],
-      // selectedCellYStart: coord[0][1],
-      // selectedCellXEnd: coord[0][2],
-      // selectedCellYEnd: coord[0][3],
-      activeTableRef: activeTable
-    });
-
-    this.setTable2CellValue();
+    // let activeTable = this.ref.current.id;
+    // this.setState({
+    //   // selectedCellXStart: coord[0][0],
+    //   // selectedCellYStart: coord[0][1],
+    //   // selectedCellXEnd: coord[0][2],
+    //   // selectedCellYEnd: coord[0][3],
+    //   activeTableRef: activeTable
+    // });
   };
 
   renderEngagementInfo = () => {
@@ -65,13 +72,10 @@ class Workingpaper extends React.Component {
   };
 
   renderAgreeLeadSheet = () => {
-    this.ref = React.createRef();
-
-    var newComponentsState = this.state.components;
-
-    newComponentsState.push(
+    let agreeLeadSheetRef = React.createRef();
+    this.components.push(
       <HotTable
-        ref={this.ref}
+        ref={agreeLeadSheetRef}
         data={DATA.agreeLeadsheetData}
         colHeaders={true}
         contextMenu
@@ -81,33 +85,32 @@ class Workingpaper extends React.Component {
         height="300"
         stretchH="all"
         formulas={true}
-        afterSelection={this.onCellSelect}
+        afterSelection={(e, column, row) => {
+          this.onCellSelect(
+            e,
+            row,
+            column
+            // row2,
+            // column2,
+            // preventScrolling,
+            // selectionLayerLevel
+          );
+        }}
         manualColumnResize
         manualRowResize
         manualColumnFreeze
       />
     );
 
-    // newComponentsState.push(
-    //   <Spreadsheet
-    //     ref={this.forwardref}
-    //     onCellSelect={this.onCellSelect}
-    //     data={DATA.agreeLeadsheetData}
-    //     id="agreeLeadSheet"
-    //   />
-    // );
-
-    this.setState({ components: newComponentsState });
+    this.setState({ state: this.state });
   };
 
   renderSampleCalculation = () => {
-    this.ref = React.createRef();
+    let sampleCalculationRef = React.createRef();
 
-    var newComponentsState = this.state.components;
-
-    newComponentsState.push(
+    this.components.push(
       <HotTable
-        ref={this.ref}
+        ref={sampleCalculationRef}
         data={DATA.sampleCalculation}
         colHeaders={true}
         contextMenu
@@ -117,23 +120,23 @@ class Workingpaper extends React.Component {
         height="300"
         stretchH="all"
         formulas={true}
-        afterSelection={this.onCellSelect}
+        afterSelection={(e, column, row) => {
+          this.onCellSelect(
+            e,
+            row,
+            column
+            // row2,
+            // column2,
+            // preventScrolling,
+            // selectionLayerLevel
+          );
+        }}
         manualColumnResize
         manualRowResize
         manualColumnFreeze
       />
     );
-
-    // newComponentsState.push(
-    //   <Spreadsheet
-    //     ref={this.forwardref}
-    //     onCellSelect={this.onCellSelect}
-    //     data={DATA.sampleCalculation}
-    //     id="agreeSampleCalculation"
-    //   />
-    // );
-
-    this.setState({ components: newComponentsState });
+    this.setState({ state: this.state });
   };
 
   storeCellValue = () => {
@@ -142,69 +145,38 @@ class Workingpaper extends React.Component {
     });
   };
 
-  table1 = () => {
-    console.log(
-      this.state.components[0].ref.current.hotInstance.getCopyableData(8, 3)
-    );
-  };
+  originLink = () => {
+    this.setState({originMode: true})
+    alert('select origin cell')
+  }
 
-  table2 = () => {
-    console.log(
-      this.state.components[1].ref.current.hotInstance.getCopyableData(0, 0)
-    );
-  };
+  destinationLink = () => {
+    
+  }
 
-  setTable2CellValue = () => {
-    let table1CellValue = this.state.components[0].ref.current.hotInstance.getCopyableData(
-      8,
-      3
-    );
-    this.state.components[1].ref.current.hotInstance.setDataAtCell(
-      4,
-      1,
-      table1CellValue
-    );
-  };
-
-  setLink = () => {
-    this.setState({ linkSettingMode: true });
-  };
-
-  render() {
-    console.log(
-      this.state.components[1] ? this.state.components[0].ref.current.id : ""
-    );
+  renderButtons = () => {
     return (
-      <div id="working-paper">
-        <AddBlock
-          engagementInfo={this.props.engagementInfo}
-          renderEngagementInfo={this.renderEngagementInfo}
-          renderWorkingPaperInstructions={this.renderWorkingPaperInstructions}
-          renderAgreeLeadSheet={this.renderAgreeLeadSheet}
-          renderSampleCalculation={this.renderSampleCalculation}
-        />
-
+      <div>
+        {" "}
         <button onClick={this.storeCellValue}>
           {this.state.storedCellValue
             ? this.state.storedCellValue
             : "Store cell value"}
         </button>
-
         <button onClick={this.table1}>Check 0,0 on table 1</button>
-
         <button onClick={this.table2}>Check 0,0 on table 2</button>
-
         <button onClick={this.setTable2CellValue}>
           Set Table 2 population to the final difference in table 1
         </button>
+        <button onClick={this.originLink}>Oirigin Link</button>
+        <button onClick={this.destinationLink}>Destination Link</button>
+      </div>
+    );
+  };
 
-        <button onClick={this.setLink}>Link Setting Mode</button>
-
-        {this.state.components.map(component => (
-          <div>{component}</div>
-        ))}
-
-        <div id="components" />
+  renderTrackers = () => {
+    return (
+      <div>
         <h2>
           selectedCellXStart: {this.state.selectedCellXStart}
           ,selectedCellYStart: {this.state.selectedCellYStart},
@@ -214,6 +186,27 @@ class Workingpaper extends React.Component {
         <h2>copyableData: {this.state.copyableData}</h2>
         <h2>storedCellValue: {this.state.storedCellValue}</h2>
         <h2>table ID: {this.state.activeTableRef}</h2>
+      </div>
+    );
+  };
+
+  render() {
+    return (
+      <div id="working-paper">
+        <AddBlock
+          engagementInfo={this.props.engagementInfo}
+          renderEngagementInfo={this.renderEngagementInfo}
+          renderWorkingPaperInstructions={this.renderWorkingPaperInstructions}
+          renderAgreeLeadSheet={this.renderAgreeLeadSheet}
+          renderSampleCalculation={this.renderSampleCalculation}
+        />
+        {this.renderButtons()}
+
+        {this.components.map(component => (
+          <div>{component}</div>
+        ))}
+
+        {this.renderTrackers()}
       </div>
     );
   }

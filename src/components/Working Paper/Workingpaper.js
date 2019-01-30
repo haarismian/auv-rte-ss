@@ -20,10 +20,6 @@ class Workingpaper extends React.Component {
     this.components = [];
   }
 
-  //empty state array which will be array of objects that will be all the links
-  // when I click origin, add the table id and cell coordinates to an object as origin cell
-  // on render you need to refresh links by running a function to go through the arrays and apply the data at every cell in the linking
-
   state = {
     selectedCellXStart: null,
     selectedCellYStart: null,

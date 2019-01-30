@@ -22,6 +22,7 @@ const Spreadsheet = React.forwardRef((props, ref) => (
       manualColumnResize
       manualRowResize
       manualColumnFreeze
+      comments
     />
 ));
 

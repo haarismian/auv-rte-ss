@@ -12,12 +12,17 @@ import WorkingPaperInstructions from "./Building Blocks/WorkingPaperInstructions
 import Spreadsheet from "../Spreadsheet/Spreadsheet";
 
 import { DATA } from "./Building Blocks/data";
+import { Link } from "@material-ui/core";
 
 class Workingpaper extends React.Component {
   constructor(props) {
     super(props);
     this.components = [];
   }
+
+  //empty state array which will be array of objects that will be all the links
+  // when I click origin, add the table id and cell coordinates to an object as origin cell
+  // on render you need to refresh links by running a function to go through the arrays and apply the data at every cell in the linking
 
   state = {
     selectedCellXStart: null,
@@ -30,27 +35,43 @@ class Workingpaper extends React.Component {
     components: [],
     originMode: false,
     destinationMode: false,
-    linkingCell: null
+    cellLinks: [],
+    cellLinkOrigin: null
   };
 
   onCellSelect = (e, row, column, ref) => {
-    console.log("r:" + row);
-    console.log("c:" + column);
-    console.log(ref.id)
+    if (
+      this.state.cellLinks === undefined ||
+      this.state.cellLinks.length === 0
+    ) {
+      this.cellLinkRefresh();
+    }
+    console.log(this.state.cellLinks);
+    console.log(this.components);
 
-    if (this.state.originMode === true && this.state.linkingCell !== null) {
-      this.setState({ linkingCell: { y: row, x: column } });
-    } else if (this.state.linkingCell) {
+    if (this.state.originMode === true) {
+      let cellLinkOriginTemp = { y: row, x: column, tableID: ref.id };
+      this.setState({
+        cellLinkOrigin: cellLinkOriginTemp,
+        originMode: false
+      });
     }
 
-    // let activeTable = this.ref.current.id;
-    // this.setState({
-    //   // selectedCellXStart: coord[0][0],
-    //   // selectedCellYStart: coord[0][1],
-    //   // selectedCellXEnd: coord[0][2],
-    //   // selectedCellYEnd: coord[0][3],
-    //   activeTableRef: activeTable
-    // });
+    if (this.state.destinationMode === true) {
+      let cellLinkDestinationTemp = { y: row, x: column, tableID: ref.id };
+      let cellLinksArray = this.state.cellLinks;
+
+      cellLinksArray.push({
+        origin: this.state.cellLinkOrigin,
+        destination: cellLinkDestinationTemp
+      });
+
+      this.setState({
+        cellLinks: cellLinksArray,
+        destinationMode: false
+      });
+      this.cellLinkRefresh();
+    }
   };
 
   renderEngagementInfo = () => {
@@ -74,6 +95,7 @@ class Workingpaper extends React.Component {
         onCellSelect={this.onCellSelect}
         data={DATA.agreeLeadsheetData}
         ref={agreeLeadSheetRef}
+        afterChange={this.cellLinkRefresh}
       />
     );
 
@@ -88,6 +110,7 @@ class Workingpaper extends React.Component {
         onCellSelect={this.onCellSelect}
         data={DATA.sampleCalculation}
         ref={sampleCalculationRef}
+        afterChange={this.cellLinkRefresh}
       />
     );
 
@@ -105,46 +128,100 @@ class Workingpaper extends React.Component {
     alert("select origin cell");
   };
 
-  destinationLink = () => {};
+  destinationLink = () => {
+    this.setState({ destinationMode: true });
+    alert("select destination cell");
+  };
 
   renderButtons = () => {
     return (
       <div>
-        {" "}
-        <button onClick={this.storeCellValue}>
-          {this.state.storedCellValue
-            ? this.state.storedCellValue
-            : "Store cell value"}
-        </button>
-        <button onClick={this.table1}>Check 0,0 on table 1</button>
-        <button onClick={this.table2}>Check 0,0 on table 2</button>
         <button onClick={this.setTable2CellValue}>
           Set Table 2 population to the final difference in table 1
         </button>
         <button onClick={this.originLink}>Oirigin Link</button>
         <button onClick={this.destinationLink}>Destination Link</button>
+        <button onClick={this.cellLinkRefresh}>Refresh Links</button>
       </div>
     );
   };
 
   renderTrackers = () => {
-    return (
-      <div>
-        <h2>
-          selectedCellXStart: {this.state.selectedCellXStart}
-          ,selectedCellYStart: {this.state.selectedCellYStart},
-          selectedCellXEnd: {this.state.selectedCellXEnd}, selectedCellYEnd:{" "}
-          {this.state.selectedCellYEnd},
-        </h2>
-        <h2>copyableData: {this.state.copyableData}</h2>
-        <h2>storedCellValue: {this.state.storedCellValue}</h2>
-        <h2>table ID: {this.state.activeTableRef}</h2>
-      </div>
+    const tracker = this.state.cellLinks.map(Link => {
+      debugger;
+      let originCoordY = Link.origin.y;
+      let originCoordX = Link.origin.x;
+      let originTableID = Link.origin.tableID;
+      let destinationCoordY = Link.destination.y;
+      let destinationCoordX = Link.destination.x;
+      let destinationTableID = Link.destination.tableID;
+      return (
+        <li>
+          origin: y: {originCoordY}, origin x: {originCoordX}, originTable:{" "}
+          {originTableID}, destination y: {destinationCoordY}, destination x:{" "}
+          {destinationCoordX}, desintationTable: {destinationTableID}
+        </li>
+      );
+    });
+    return <ul>{tracker}</ul>;
+    // return (
+    //   <div>
+    //     <h2>
+    //       selectedCellXStart: {this.state.selectedCellXStart}
+    //       selectedCellYStart: {this.state.selectedCellYStart}, selectedCellXEnd:{" "}
+    //       {this.state.selectedCellXEnd}, selectedCellYEnd:{" "}
+    //       {this.state.selectedCellYEnd},
+    //     </h2>
+    //     <h2>copyableData: {this.state.copyableData}</h2>
+    //     <h2>storedCellValue: {this.state.storedCellValue}</h2>
+    //     <h2>table ID: {this.state.activeTableRef}</h2>
+    //   </div>
+    // );
+  };
+
+  setTable2CellValue = () => {
+    let populationValue = this.components[0].ref.current.hotInstance.getCopyableData(
+      8,
+      3
+    );
+    this.components[1].ref.current.hotInstance.setDataAtCell(
+      4,
+      1,
+      populationValue
     );
   };
 
+  cellLinkRefresh = () => {
+    this.state.cellLinks.forEach(Link => {
+      let originCoordY = Link.origin.y;
+      let originCoordX = Link.origin.x;
+      let originTableID = Link.origin.tableID;
+      let destinationCoordY = Link.destination.y;
+      let destinationCoordX = Link.destination.x;
+      let destinationTableID = Link.destination.tableID;
+      let valueToCopy;
+
+      this.components.forEach(component => {
+        if (component.ref.current.id === originTableID) {
+          valueToCopy = component.ref.current.hotInstance.getCopyableData(
+            originCoordY,
+            originCoordX
+          );
+        }
+      });
+      this.components.forEach(component => {
+        if (component.ref.current.id === destinationTableID) {
+          component.ref.current.hotInstance.setDataAtCell(
+            destinationCoordY,
+            destinationCoordX,
+            valueToCopy
+          );
+        }
+      });
+    });
+  };
+
   render() {
-    console.log(this.refs);
     return (
       <div id="working-paper">
         <AddBlock
@@ -155,7 +232,6 @@ class Workingpaper extends React.Component {
           renderSampleCalculation={this.renderSampleCalculation}
         />
         {this.renderButtons()}
-
         {this.components.map(component => (
           <div>{component}</div>
         ))}

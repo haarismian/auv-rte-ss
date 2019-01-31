@@ -1,9 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import FlatButton from "material-ui/FlatButton";
-
-import { HotTable } from "@handsontable-pro/react";
 import "handsontable-pro/dist/handsontable.full.css";
 
 import AddBlock from "./AddBlock";
@@ -12,7 +9,6 @@ import WorkingPaperInstructions from "./Building Blocks/WorkingPaperInstructions
 import Spreadsheet from "../Spreadsheet/Spreadsheet";
 
 import { DATA } from "./Building Blocks/data";
-import { Link } from "@material-ui/core";
 
 class Workingpaper extends React.Component {
   constructor(props) {
@@ -42,8 +38,6 @@ class Workingpaper extends React.Component {
     ) {
       this.cellLinkRefresh();
     }
-    console.log(this.state.cellLinks);
-    console.log(this.components);
 
     if (this.state.originMode === true) {
       let cellLinkOriginTemp = { y: row, x: column, tableID: ref.id };
@@ -70,6 +64,54 @@ class Workingpaper extends React.Component {
     }
   };
 
+  afterCreateC = (index, amount, source, ref) => {
+    var cellLinksArray = this.state.cellLinks;
+
+    cellLinksArray.forEach((Link, i) => {
+      let originCoordX = Link.origin.x;
+      let originTableID = Link.origin.tableID;
+      let destinationCoordX = Link.destination.x;
+      let destinationTableID = Link.destination.tableID;
+
+      if (ref.id === originTableID) {
+        if (index <= originCoordX) {
+          cellLinksArray[i].origin.x += amount;
+        }
+      }
+      if (ref.id === destinationTableID) {
+        if (index <= destinationCoordX) {
+          cellLinksArray[i].destination.x += amount;
+        }
+      }
+    });
+
+    this.setState({ cellLinks: cellLinksArray });
+  };
+
+  afterCreateR = (index, amount, source, ref) => {
+    var cellLinksArray = this.state.cellLinks;
+
+    cellLinksArray.forEach((Link, i) => {
+      let originCoordY = Link.origin.y;
+      let originTableID = Link.origin.tableID;
+      let destinationCoordY = Link.destination.y;
+      let destinationTableID = Link.destination.tableID;
+
+      if (ref.id === originTableID) {
+        if (index <= originCoordY) {
+          cellLinksArray[i].origin.y += amount;
+        }
+      }
+      if (ref.id === destinationTableID) {
+        if (index <= destinationCoordY) {
+          cellLinksArray[i].destination.y += amount;
+        }
+      }
+    });
+
+    this.setState({ cellLinks: cellLinksArray });
+  };
+
   renderEngagementInfo = () => {
     ReactDOM.render(
       <EngagementInfo engagementInfo={this.props.engagementInfo} />,
@@ -92,6 +134,8 @@ class Workingpaper extends React.Component {
         data={DATA.agreeLeadsheetData}
         ref={agreeLeadSheetRef}
         afterChange={this.cellLinkRefresh}
+        afterCreateC={this.afterCreateC}
+        afterCreateR={this.afterCreateR}
       />
     );
 
@@ -107,6 +151,24 @@ class Workingpaper extends React.Component {
         data={DATA.sampleCalculation}
         ref={sampleCalculationRef}
         afterChange={this.cellLinkRefresh}
+        afterCreateC={this.afterCreateC}
+        afterCreateR={this.afterCreateR}
+      />
+    );
+
+    this.setState({ state: this.state });
+  };
+
+  sampleTest = () => {
+    let sampleTestRef = React.createRef();
+
+    this.components.push(
+      <Spreadsheet
+        onCellSelect={this.onCellSelect}
+        ref={sampleTestRef}
+        afterChange={this.cellLinkRefresh}
+        afterCreateC={this.afterCreateC}
+        afterCreateR={this.afterCreateR}
       />
     );
 
@@ -144,7 +206,6 @@ class Workingpaper extends React.Component {
 
   renderTrackers = () => {
     const tracker = this.state.cellLinks.map(Link => {
-      debugger;
       let originCoordY = Link.origin.y;
       let originCoordX = Link.origin.x;
       let originTableID = Link.origin.tableID;
@@ -201,6 +262,7 @@ class Workingpaper extends React.Component {
           renderWorkingPaperInstructions={this.renderWorkingPaperInstructions}
           renderAgreeLeadSheet={this.renderAgreeLeadSheet}
           renderSampleCalculation={this.renderSampleCalculation}
+          sampleTest={this.sampleTest}
         />
         {this.renderButtons()}
         {this.components.map(component => (

@@ -41,6 +41,11 @@ class SimpleMenu extends React.Component {
   this.handleClose()
   }
 
+  sampleTest = () => {
+    this.props.sampleTest()
+    this.handleClose()
+    }
+
   render() {
     const { anchorEl } = this.state;
 
@@ -63,7 +68,7 @@ class SimpleMenu extends React.Component {
           <MenuItem onClick={this.renderWorkingPaperInstructions}>Instructions</MenuItem>
           <MenuItem onClick={this.renderAgreeLeadSheet}>Agree Leadsheet</MenuItem>
           <MenuItem onClick={this.renderSampleCalculation}>Sample Calculator</MenuItem>
-          <MenuItem onClick={this.handleClose}>Sample Test</MenuItem>
+          <MenuItem onClick={this.sampleTest}>Sample Test</MenuItem>
         </Menu>
       </div>
     );

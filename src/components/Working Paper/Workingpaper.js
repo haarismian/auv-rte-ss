@@ -160,31 +160,6 @@ class Workingpaper extends React.Component {
       );
     });
     return <ul>{tracker}</ul>;
-    // return (
-    //   <div>
-    //     <h2>
-    //       selectedCellXStart: {this.state.selectedCellXStart}
-    //       selectedCellYStart: {this.state.selectedCellYStart}, selectedCellXEnd:{" "}
-    //       {this.state.selectedCellXEnd}, selectedCellYEnd:{" "}
-    //       {this.state.selectedCellYEnd},
-    //     </h2>
-    //     <h2>copyableData: {this.state.copyableData}</h2>
-    //     <h2>storedCellValue: {this.state.storedCellValue}</h2>
-    //     <h2>table ID: {this.state.activeTableRef}</h2>
-    //   </div>
-    // );
-  };
-
-  setTable2CellValue = () => {
-    let populationValue = this.components[0].ref.current.hotInstance.getCopyableData(
-      8,
-      3
-    );
-    this.components[1].ref.current.hotInstance.setDataAtCell(
-      4,
-      1,
-      populationValue
-    );
   };
 
   cellLinkRefresh = () => {

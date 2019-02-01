@@ -194,9 +194,6 @@ class Workingpaper extends React.Component {
   renderButtons = () => {
     return (
       <div>
-        <button onClick={this.setTable2CellValue}>
-          Set Table 2 population to the final difference in table 1
-        </button>
         <button onClick={this.originLink}>Oirigin Link</button>
         <button onClick={this.destinationLink}>Destination Link</button>
         <button onClick={this.cellLinkRefresh}>Refresh Links</button>

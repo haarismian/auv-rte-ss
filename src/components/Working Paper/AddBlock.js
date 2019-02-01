@@ -65,7 +65,6 @@ class SimpleMenu extends React.Component {
           onClose={this.handleClose}
         >
           <MenuItem onClick={this.renderEngagementInfo}>Engagement Info</MenuItem>
-          <MenuItem onClick={this.renderWorkingPaperInstructions}>Instructions</MenuItem>
           <MenuItem onClick={this.renderAgreeLeadSheet}>Agree Leadsheet</MenuItem>
           <MenuItem onClick={this.renderSampleCalculation}>Sample Calculator</MenuItem>
           <MenuItem onClick={this.sampleTest}>Sample Test</MenuItem>
